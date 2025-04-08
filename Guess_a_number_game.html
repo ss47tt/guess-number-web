@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>🎯 Guess the Number</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f0f8ff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .game-container {
+      background-color: #ffffff;
+      border: 2px solid #ccc;
+      border-radius: 12px;
+      padding: 40px;
+      width: 90%;
+      max-width: 500px;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    h1 {
+      font-size: 28px;
+      margin-bottom: 20px;
+    }
+    #range {
+      font-size: 20px;
+      margin-bottom: 15px;
+    }
+    input[type="number"] {
+      font-size: 20px;
+      padding: 10px;
+      width: 100px;
+      text-align: center;
+      margin-bottom: 15px;
+    }
+    button {
+      font-size: 18px;
+      padding: 10px 20px;
+      margin: 5px;
+      cursor: pointer;
+      border-radius: 6px;
+      border: none;
+    }
+    #guessBtn {
+      background-color: #add8e6;
+    }
+    #resetBtn {
+      background-color: #e6e6fa;
+    }
+    #message {
+      margin-top: 20px;
+      font-size: 18px;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+  <div class="game-container">
+    <h1>🎯 Guess the Number!</h1>
+    <div id="range">Pick a number between <span id="low">1</span> and <span id="high">100</span></div>
+    <input type="number" id="guessInput" placeholder="Your guess" />
+    <br />
+    <button id="guessBtn">Guess</button>
+    <button id="resetBtn">Reset Game</button>
+    <div id="message"></div>
+  </div>
+
+  <script>
+    let low = 1;
+    let high = 100;
+    let number = getRandomNumber(low + 1, high - 1);
+
+    const lowSpan = document.getElementById('low');
+    const highSpan = document.getElementById('high');
+    const guessInput = document.getElementById('guessInput');
+    const message = document.getElementById('message');
+
+    function getRandomNumber(min, max) {
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    function showMessage(text, color = "#333") {
+      message.textContent = text;
+      message.style.color = color;
+    }
+
+    document.getElementById('guessBtn').onclick = function () {
+      const guess = parseInt(guessInput.value);
+      if (isNaN(guess)) {
+        showMessage("❌ Please enter a valid number.", "red");
+        return;
+      }
+
+      if (guess <= low || guess >= high) {
+        showMessage(`⚠️ Guess must be between ${low} and ${high}.`, "orange");
+        return;
+      }
+
+      if (guess === number) {
+        showMessage("✅ Correct! You guessed it!", "green");
+        alert("🎉 Congratulations! You guessed the number!");
+        document.getElementById('guessBtn').disabled = true;
+      } else if (guess < number) {
+        low = guess;
+        showMessage("🔻 Too low! Try again.");
+      } else {
+        high = guess;
+        showMessage("🔺 Too high! Try again.");
+      }
+
+      lowSpan.textContent = low;
+      highSpan.textContent = high;
+      guessInput.value = "";
+      guessInput.focus();
+    };
+
+    document.getElementById('resetBtn').onclick = function () {
+      low = 1;
+      high = 100;
+      number = getRandomNumber(low + 1, high - 1);
+      lowSpan.textContent = low;
+      highSpan.textContent = high;
+      showMessage("");
+      guessInput.value = "";
+      guessInput.focus();
+      document.getElementById('guessBtn').disabled = false;
+    };
+
+    guessInput.addEventListener("keypress", function (event) {
+      if (event.key === "Enter") {
+        document.getElementById("guessBtn").click();
+      }
+    });
+  </script>
+</body>
+</html>
